@@ -14,8 +14,10 @@ app.set('view engine', 'ejs');
 app.get('/', function(request, response) {
   var someDate = new Date();
   someDate.setDate(someDate.getDate() - 1);
+  console.log('someDate', someDate);
   var tmp = someDate.toJSON();
   var thisDate = tmp.slice(0,10).replace(/-/g,'-');
+  console.log('thisDate', thisDate);
   var url = 'https://wakatime.com/api/v1/users/current/durations?api_key='+ wKey +'&date=' + thisDate;
   fetch(url)
   .then(response => 
@@ -25,42 +27,48 @@ app.get('/', function(request, response) {
       }))
     .then(res => {
         var info = res.data.data;
-        var sum = info.reduce((acc, elem) => {
-          return acc + elem.duration;
-        }, 0)
-        var total = sum / 60 / 60;
-        console.log('total', total);
-        total = total.toString();
+        var requestid = res.data.end;
+        var startTime = res.data.start;
+        var now = new Date().getTime();
+        console.log('now', now);
+        // var daystamp = Date.getYear() + Date.getMonth() + Date.getDay(); 
+        // var daystamp = (new Date()).toISOString().slice(0,10).replace(/-/g,"");
+        var daystamp = thisDate.replace(/-/g, '');
+        console.log('daystamp', daystamp);
+        // var sum = info.reduce((acc, elem) => {
+        //   return acc + elem.duration;
+        // }, 0)
+        // var total = sum / 60 / 60;
+        // console.log('total', total);
+        // total = total.toString();
 
+        // var beeUrl = 'https://beeminder.com/api/v1/users/liquidsilver/goals/wakatimefromzapier/datapoints.json?auth_token='+ bKey;
         // var beeOpts = {
         //   'method': 'POST',
         //   'headers': {
-        //     'auth_token': {
-        //       "username":"liquidsilver",
-        //       "auth_token": bKey
-        //     }
-        //   },
-        //   'value': '0.022',
-        //   'timestamp': '1494562463387',
-        //   'requestid': '1494562463387d1',
-        //   'comment': 'wakaTimeData'
+        //      'host': 'www.beeminder.com',
+        //      'X-Target-URI': 'https://www.beeminder.com',
+        //      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        // },
+        //   'body': {
+        //      'timestamp': now,
+        //      'value': total,
+        //      'comment': 'start' + startTime,
+        //      'requestid': requestid,
+        //      'daystamp': HELP HERE!!
+        //   }
         // }
-        // var ifttUrl = 'https://maker.ifttt.com/trigger/waka/with/key/nVTS3kmHCRg1im28GZnNrDsQr6hBYo7ugB_57gIEJ0e';
-        var now = new Date().getTime();
-        // var beeUrl = 'https://www.beeminder.com/api/v1/users/liquidsilver/goals/wakatimefromzapier/datapoints.json?timestamp='+ now +'&value='+ total +'&comment=wakaTimeData';
-        // var beeUrl = 'https://www.beeminder.com/api/v1/users/liquidsilver/goals/wakatimefromzapier/datapoints.json';
-        var beeUrl2 = 'https://beeminder.com/api/v1/users/liquidsilver/goals/wakatimefromzapier/datapoints.json?auth_token='+ bKey +'&timestamp=1494562463&daystamp="20170511"&value=0.0624&comment="fromPostman"&requestid="1494562463abc2"&updated_at=1494594321';
 
-        fetch(beeUrl2, {'method': 'POST'})
-          .then(function(response){
-            return response.text();
-          })
-          .then(res => {
-            console.log('some response inside the bee POST', res);
-          })
-          .catch(error => {
-            console.error('error message:', error);
-          });
+        // fetch(beeUrl, beeOpts)
+        //   .then(function(response){
+        //     return response.text();
+        //   })
+        //   .then(res => {
+        //     console.log('some response inside the bee POST', res);
+        //   })
+        //   .catch(error => {
+        //     console.error('error message:', error);
+        //   });
     })
     .catch(error => {
       console.error('its an error: ', error);
@@ -75,13 +83,8 @@ app.listen(app.get('port'), function() {
 
 
 /**
- * id (string): A unique ID, used to identify a datapoint when deleting or editing it.
-timestamp (number): The unix time (in seconds) of the datapoint.
-daystamp (string): The date of the datapoint (e.g., “20150831”). Sometimes timestamps are surprising due to goal deadlines, so if you’re looking at Beeminder data, you’re probably interested in the daystamp.
-value (number): The value, e.g., how much you weighed on the day indicated by the timestamp.
-comment (string): An optional comment about the datapoint.
-updated_at (number): The unix time that this datapoint was entered or last updated.
-requestid (string): If a datapoint was created via the API and this parameter was included, it will be echoed back.
+ * THIS JSON BODY SUCCEEDED
+ * {"timestamp":1494609823,"value":0.01023,"comment":"'from apigee'","id":"5915f024e1301f3e7d000f72","updated_at":1494609956,"requestid":"'abc1494609823'","canonical":"12 0.01023 \"'from apigee'\"","daystamp":"20170512","status":"created"}
  */
 
 
