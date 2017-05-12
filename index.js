@@ -2,77 +2,76 @@ var express = require('express');
 var app = express();
 var fetch = require('node-fetch');
 var ConfigVars = require('./config_vars');
-console.log('ConfigVars.port', ConfigVars.port);
-app.set('port', (process.env.PORT || ConfigVars.port));
+
 var wKey = (process.env.WAKAKEY || ConfigVars.wKey);
 var bKey = (process.env.BEEKEY || ConfigVars.bKey);
+
+app.set('port', (process.env.PORT || ConfigVars.port));
 
 app.use(express.static(__dirname + '/public'));
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
 app.get('/', function(request, response) {
-  var someDate = new Date();
-  someDate.setDate(someDate.getDate() - 1);
-  console.log('someDate', someDate);
-  var tmp = someDate.toJSON();
-  var thisDate = tmp.slice(0,10).replace(/-/g,'-');
-  console.log('thisDate', thisDate);
-  var url = 'https://wakatime.com/api/v1/users/current/durations?api_key='+ wKey +'&date=' + thisDate;
-  fetch(url)
-  .then(response => 
-    response.json()
-      .then(data => ({
-          data: data,
-      }))
-    .then(res => {
-        var info = res.data.data;
-        var requestid = res.data.end;
-        var startTime = res.data.start;
-        var now = new Date().getTime();
-        console.log('now', now);
-        // var daystamp = Date.getYear() + Date.getMonth() + Date.getDay(); 
-        // var daystamp = (new Date()).toISOString().slice(0,10).replace(/-/g,"");
-        var daystamp = thisDate.replace(/-/g, '');
-        console.log('daystamp', daystamp);
-        // var sum = info.reduce((acc, elem) => {
-        //   return acc + elem.duration;
-        // }, 0)
-        // var total = sum / 60 / 60;
-        // console.log('total', total);
-        // total = total.toString();
+  // var someDate = new Date();
+  // someDate.setDate(someDate.getDate() - 1);
+  // var tmp = someDate.toJSON();
+  // var thisDate = tmp.slice(0,10).replace(/-/g,'-');
+  // var url = 'https://wakatime.com/api/v1/users/current/durations?api_key='+ wKey +'&date=' + thisDate;
+  // fetch(url)
+  // .then(response => 
+  //   response.json()
+  //     .then(data => ({
+  //         data: data,
+  //     }))
+  //   .then(res => {
+  //       var info = res.data.data;
+  //       var requestid = res.data.end;
+  //       var startTime = res.data.start;
+  //       var now = new Date().getTime();
+  //       console.log('now', now);
+  //       // var daystamp = Date.getYear() + Date.getMonth() + Date.getDay(); 
+  //       // var daystamp = (new Date()).toISOString().slice(0,10).replace(/-/g,"");
+  //       var daystamp = thisDate.replace(/-/g, '');
+  //       console.log('daystamp', daystamp);
+  //       // var sum = info.reduce((acc, elem) => {
+  //       //   return acc + elem.duration;
+  //       // }, 0)
+  //       // var total = sum / 60 / 60;
+  //       // console.log('total', total);
+  //       // total = total.toString();
 
-        // var beeUrl = 'https://beeminder.com/api/v1/users/liquidsilver/goals/wakatimefromzapier/datapoints.json?auth_token='+ bKey;
-        // var beeOpts = {
-        //   'method': 'POST',
-        //   'headers': {
-        //      'host': 'www.beeminder.com',
-        //      'X-Target-URI': 'https://www.beeminder.com',
-        //      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-        // },
-        //   'body': {
-        //      'timestamp': now,
-        //      'value': total,
-        //      'comment': 'start' + startTime,
-        //      'requestid': requestid,
-        //      'daystamp': HELP HERE!!
-        //   }
-        // }
+  //       // var beeUrl = 'https://beeminder.com/api/v1/users/liquidsilver/goals/wakatimefromzapier/datapoints.json?auth_token='+ bKey;
+  //       // var beeOpts = {
+  //       //   'method': 'POST',
+  //       //   'headers': {
+  //       //      'host': 'www.beeminder.com',
+  //       //      'X-Target-URI': 'https://www.beeminder.com',
+  //       //      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+  //       // },
+  //       //   'body': {
+  //       //      'timestamp': now,
+  //       //      'value': total,
+  //       //      'comment': 'start' + startTime,
+  //       //      'requestid': requestid,
+  //       //      'daystamp': HELP HERE!!
+  //       //   }
+  //       // }
 
-        // fetch(beeUrl, beeOpts)
-        //   .then(function(response){
-        //     return response.text();
-        //   })
-        //   .then(res => {
-        //     console.log('some response inside the bee POST', res);
-        //   })
-        //   .catch(error => {
-        //     console.error('error message:', error);
-        //   });
-    })
-    .catch(error => {
-      console.error('its an error: ', error);
-    }));
+  //       // fetch(beeUrl, beeOpts)
+  //       //   .then(function(response){
+  //       //     return response.text();
+  //       //   })
+  //       //   .then(res => {
+  //       //     console.log('some response inside the bee POST', res);
+  //       //   })
+  //       //   .catch(error => {
+  //       //     console.error('error message:', error);
+  //       //   });
+  //   })
+  //   .catch(error => {
+  //     console.error('its an error: ', error);
+  //   }));
 
   response.render('pages/index');
 });
