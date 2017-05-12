@@ -2,7 +2,7 @@
   "name": "Wakatime to Beeminder using Node.js",
   "description": "A barebones Node.js app using Express 4",
   "repository": "https://github.com/SFoskitt/wakaToBee",
-  "logo": "https://cdn.rawgit.com/heroku/node-js-getting-started/master/public/node.svg",
+  "logo": "",
   "keywords": ["node", "express", "heroku", "wakatime", "beeminder"],
-  "image": "heroku/nodejs"
+  "image": ""
 }
