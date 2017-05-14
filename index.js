@@ -45,7 +45,7 @@ app.get('/', function(request, response) {
         value: total,
         timestamp: now,
         daystamp: daystamp,
-        comment: 'start: ' + startTime + 'end: ' + res.data.end,
+        comment: 'start: ' + startTime + 'end: ' + wakaData.data.end,
         requestid: requestid,
       })
 
