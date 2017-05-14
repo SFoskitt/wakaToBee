@@ -29,7 +29,7 @@ app.get('/', function(request, response) {
     })
     res.on('end', (wakaData) => {
       var wakaData = JSON.parse(Buffer.concat(tempData));
-      console.log(`wakaData.data: ${wakaData.data}`);
+      console.log(`wakaData: ${wakaData}`);
 
       // variables and data setup for beeminder
       var requestid = wakaData.end;
