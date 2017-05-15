@@ -15,7 +15,7 @@ app.get('/', function(request, response) {
 
   // variables setup for wakatime
   var someDate = new Date();
-  someDate.setDate(someDate.getDate() - 1);
+  someDate.setDate(someDate.getDate() - 1);  // for yesterday's date because this runs at 1am local time
   var tmp = someDate.toJSON();
   var thisDate = tmp.slice(0,10).replace(/-/g,'-');
   var wakaUrl = 'https://wakatime.com/api/v1/users/current/durations?api_key='+ wKey +'&date=' + thisDate;
@@ -34,18 +34,18 @@ app.get('/', function(request, response) {
       // variables and data setup for beeminder
       var requestid = wakaData.end;
       var startTime = wakaData.start;
-      var now = Math.floor(new Date().getTime()/1000);  // getTime() returns timestamp in milliseconds, needs seconds
+      var now = Math.floor(new Date().getTime()/1000);  // getTime() returns milliseconds, need seconds
       var daystamp = thisDate.replace(/-/g, '');
       var sum = wakaData.data.reduce((acc, elem) => {
         return acc + elem.duration;
       }, 0)
-      var total = sum / 60 / 60;  // Math.round(num * 100) / 100
+      var total = sum / 60 / 60;
 
       var beeBody = JSON.stringify({
         value: total,
         timestamp: now,
         daystamp: daystamp,
-        comment: 'start: ' + startTime + 'end: ' + wakaData.data.end,
+        comment: 'start: ' + startTime + 'end: ' + wakaData.end,
         requestid: requestid,
       })
 
@@ -76,7 +76,6 @@ app.get('/', function(request, response) {
       })
       req.write(beeBody);
       req.end();  // closes beeminder request
-
     });  // closes res.on('end') from wakatime
   })  // closes https.get() from wakatime
   .on('error', (e) => {
@@ -89,10 +88,3 @@ app.get('/', function(request, response) {
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
 });
-
-/*
-SEE EVERNOTE AND APIGEE FOR FINAL SOLUTION - THIS ACTUALLY WORKS
-1. COME UP WITH A BETTER SOLUTION FOR REQUESTID - SET THIS AS WAKATIME END TIME OR OTHER TO SPECIFY ONE DAY'S DATA
-2. FIND SOMETHING IN ZAPIER THAT CAN CALL THE DEPLOYED URL ONCE PER DAY
-3. PUT THE KEYS INTO HEROKU - *THEN* - PUSH TO GITHUB
-*/
